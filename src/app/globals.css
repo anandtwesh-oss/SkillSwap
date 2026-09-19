@@ -48,3 +48,168 @@ body {
 .animate-pulse-slow {
   animation: pulse-slow 3s ease-in-out infinite;
 }
+/* ===== Enhanced UI additions ===== */
+
+/* Smooth transitions on all interactive elements */
+button,
+a,
+.card,
+[class*="card"] {
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease, background-color 0.2s ease;
+}
+
+/* Button hover — subtle lift + glow */
+button:hover,
+a[role="button"]:hover {
+  transform: translateY(-2px) scale(1.02);
+  box-shadow: 0 8px 20px rgba(99, 102, 241, 0.25);
+}
+
+button:active {
+  transform: translateY(0) scale(0.98);
+}
+
+/* Card hover — lift effect for stat cards, skill cards, etc */
+.card:hover,
+[class*="card"]:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.25);
+  border-color: rgba(139, 92, 246, 0.4);
+}
+
+/* Smooth page load fade-in */
+body {
+  animation: fadeIn 0.5s ease-in;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* Custom scrollbar — matches dark theme */
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.03);
+}
+
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, #7f77dd, #d4537e);
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, #6a62c9, #c04068);
+}
+
+/* Subtle glow on focus for accessibility + polish */
+button:focus-visible,
+a:focus-visible,
+input:focus-visible {
+  outline: 2px solid rgba(139, 92, 246, 0.6);
+  outline-offset: 2px;
+}
+
+/* Selection color matching theme */
+::selection {
+  background: rgba(139, 92, 246, 0.35);
+  color: white;
+}
+/* ===== Quiz / Flashcard Feature Styles ===== */
+
+/* Glassmorphic card */
+.quiz-glass-card {
+  background: rgba(255, 255, 255, 0.7);
+  border: 1px solid rgba(226, 232, 240, 0.8);
+  backdrop-filter: blur(12px);
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.04);
+}
+
+@media (prefers-color-scheme: dark) {
+  .quiz-glass-card {
+    background: rgba(15, 23, 42, 0.6);
+    border-color: rgba(51, 65, 85, 0.6);
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.2);
+  }
+}
+
+/* Prevent global hover transforms on quiz interactive elements */
+.quiz-mode-btn:hover,
+.quiz-option-btn:hover,
+.quiz-generate-btn:hover {
+  transform: none;
+  box-shadow: none;
+}
+
+.quiz-generate-btn:hover:not(:disabled) {
+  box-shadow: 0 12px 24px rgba(99, 102, 241, 0.3);
+}
+
+/* Flashcard 3D flip */
+.perspective-1000 {
+  perspective: 1000px;
+}
+
+.quiz-flashcard-inner {
+  position: relative;
+  width: 100%;
+  min-height: 280px;
+  transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+  transform-style: preserve-3d;
+}
+
+.quiz-flashcard-flipped {
+  transform: rotateY(180deg);
+}
+
+.quiz-flashcard-face {
+  position: absolute;
+  inset: 0;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+
+.quiz-flashcard-back {
+  transform: rotateY(180deg);
+}
+
+/* Shimmer loading animation */
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+.quiz-shimmer {
+  background: linear-gradient(90deg,
+    rgba(226, 232, 240, 0.3) 25%,
+    rgba(226, 232, 240, 0.7) 50%,
+    rgba(226, 232, 240, 0.3) 75%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.5s ease-in-out infinite;
+}
+
+@media (prefers-color-scheme: dark) {
+  .quiz-shimmer {
+    background: linear-gradient(90deg,
+      rgba(51, 65, 85, 0.3) 25%,
+      rgba(51, 65, 85, 0.7) 50%,
+      rgba(51, 65, 85, 0.3) 75%
+    );
+    background-size: 200% 100%;
+  }
+}
+
+/* Score reveal animation */
+@keyframes scoreReveal {
+  0% { opacity: 0; transform: scale(0.8); }
+  50% { transform: scale(1.05); }
+  100% { opacity: 1; transform: scale(1); }
+}
+
+.quiz-score-reveal {
+  animation: scoreReveal 0.5s ease-out;
+}

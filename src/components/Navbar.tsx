@@ -18,7 +18,8 @@ import {
   ChevronDown,
   RefreshCw,
   Layers,
-  ShieldCheck
+  ShieldCheck,
+  BrainCircuit
 } from 'lucide-react';
 
 export const Navbar: React.FC = () => {
@@ -51,6 +52,7 @@ export const Navbar: React.FC = () => {
       badge: pendingRequestsCount > 0 ? pendingRequestsCount : null 
     },
     { href: '/leaderboard', label: 'Leaderboard', icon: Trophy },
+    { href: '/quiz', label: 'Quiz AI', icon: BrainCircuit },
   ];
 
   return (
