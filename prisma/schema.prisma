@@ -1,0 +1,128 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id              String        @id @default(cuid())
+  name            String
+  email           String        @unique
+  password        String
+  avatar          String?       @default("https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80")
+  title           String?       @default("Skill Enthusiast")
+  bio             String?       @default("Eager to exchange knowledge and learn new skills.")
+  location        String?       @default("Remote")
+  timezone        String?       @default("UTC")
+  rating          Float         @default(5.0)
+  reviewCount     Int           @default(0)
+  completedSwaps  Int           @default(0)
+  hoursTaught     Int           @default(0)
+  points          Int           @default(100)
+  tier            String        @default("Bronze") // Bronze, Silver, Gold, Platinum, Diamond
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+
+  skills          UserSkill[]
+  requestedSwaps  SwapRequest[] @relation("RequesterSwaps")
+  receivedSwaps   SwapRequest[] @relation("ReceiverSwaps")
+  messages        Message[]
+  givenReviews    Review[]      @relation("GivenReviews")
+  receivedReviews Review[]      @relation("ReceivedReviews")
+  badges          Badge[]
+}
+
+model UserSkill {
+  id              String   @id @default(cuid())
+  userId          String
+  name            String
+  category        String
+  type            String   // "TEACH" | "LEARN"
+  proficiency     String   // "Beginner" | "Intermediate" | "Advanced" | "Expert"
+  yearsExperience Int?     @default(1)
+  description     String?  @default("")
+  createdAt       DateTime @default(now())
+
+  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+model SwapRequest {
+  id                         String    @id @default(cuid())
+  requesterId                String
+  receiverId                 String
+  teachSkill                 String
+  learnSkill                 String
+  requesterSkillProficiency  String?   @default("Intermediate")
+  receiverSkillProficiency   String?   @default("Intermediate")
+  status                     String    @default("PENDING") // PENDING, ACCEPTED, DECLINED, CANCELLED, COMPLETED
+  message                    String    @default("")
+  scheduledTime              DateTime? @default(now())
+  durationMinutes            Int       @default(60)
+  sessionRoomId              String
+  hasReviewByRequester       Boolean   @default(false)
+  hasReviewByReceiver        Boolean   @default(false)
+  createdAt                  DateTime  @default(now())
+  updatedAt                  DateTime  @updatedAt
+
+  requester                  User      @relation("RequesterSwaps", fields: [requesterId], references: [id], onDelete: Cascade)
+  receiver                   User      @relation("ReceiverSwaps", fields: [receiverId], references: [id], onDelete: Cascade)
+  messages                   Message[]
+  reviews                    Review[]
+
+  @@index([requesterId])
+  @@index([receiverId])
+}
+
+model Message {
+  id        String      @id @default(cuid())
+  swapId    String
+  senderId  String
+  text      String
+  createdAt DateTime    @default(now())
+
+  swap      SwapRequest @relation(fields: [swapId], references: [id], onDelete: Cascade)
+  sender    User        @relation(fields: [senderId], references: [id], onDelete: Cascade)
+
+  @@index([swapId])
+  @@index([senderId])
+}
+
+model Review {
+  id           String      @id @default(cuid())
+  swapId       String
+  reviewerId   String
+  targetUserId String
+  rating       Int         @default(5)
+  feedback     String
+  tags         String      @default("[]") // JSON stringified array of tag strings
+  skillTaught  String
+  createdAt    DateTime    @default(now())
+
+  swap         SwapRequest @relation(fields: [swapId], references: [id], onDelete: Cascade)
+  reviewer     User        @relation("GivenReviews", fields: [reviewerId], references: [id], onDelete: Cascade)
+  targetUser   User        @relation("ReceivedReviews", fields: [targetUserId], references: [id], onDelete: Cascade)
+
+  @@index([swapId])
+  @@index([reviewerId])
+  @@index([targetUserId])
+}
+
+model Badge {
+  id          String   @id @default(cuid())
+  userId      String
+  name        String
+  description String
+  icon        String
+  category    String   @default("teaching")
+  earnedAt    String
+  createdAt   DateTime @default(now())
+
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
